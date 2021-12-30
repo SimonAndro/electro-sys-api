@@ -40,15 +40,15 @@ class Request {
         $this->requestUrl = getFullUrl(); 
 
         $request = $this;        
-        //load classes
-        include_once (path('vendor/classes/database.php'));
-        include_once (path('vendor/classes/email.php'));
-        include_once (path('vendor/classes/view.php'));
-        include_once (path('vendor/classes/controller.php'));
-        include_once (path('vendor/classes/model.php'));
+        //load helpers
+        include_once (path('vendor/helpers/database.php'));
+        include_once (path('vendor/helpers/email.php'));
+        include_once (path('vendor/helpers/view.php'));
+        include_once (path('vendor/helpers/controller.php'));
+        include_once (path('vendor/helpers/model.php'));
 
-        include_once (path('vendor/classes/validator.php'));
-        include_once (path('vendor/classes/uploader.php'));
+        include_once (path('vendor/helpers/validator.php'));
+        include_once (path('vendor/helpers/uploader.php'));
 
         /**
          * Extend validation
@@ -73,7 +73,7 @@ class Request {
             return true;
         });
 
-        include_once(path("routes.php"));
+        include_once(path("http/routes.php"));
         $this->ipInfo = ipinfo();
 
 
@@ -392,16 +392,6 @@ class Request {
         if ($controllerClass->request == null) exit('Failed : Controller must call parent::__construct($request)');
         if ($route->secure) $controllerClass->securePage();
         $controllerClass->before(); //before method to call before calling the actual route method
-
-        if (moduleExists('saas')) {
-            $firstSegment = $this->segment(0);
-            $allowedPages = array('captions', 'file-manager','post', 'reports','schedules','accounts', 'profile');
-            if(model('user')->isLoggedIn() and model('saas::saas')->hasExpired()) {
-                if (in_array($firstSegment, $allowedPages)) {
-                    $this->redirect($this->url('#pricing', array('userid' => model('user')->authOwnerId)));
-                }
-            }
-        }
 
         if (method_exists($controllerClass, "get".ucfirst($method))) {
             $method = "get".ucfirst($method);

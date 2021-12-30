@@ -396,3 +396,8 @@ function dump_to_file() //debuging
     }
 
 }
+
+function l($l)
+{
+    return $l;
+}
